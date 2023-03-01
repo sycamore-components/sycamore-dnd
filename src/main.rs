@@ -3,8 +3,8 @@
 use gloo::console::log;
 use serde::{Deserialize, Serialize};
 use sycamore::prelude::*;
-use wasm_bindgen::*;
-use web_sys::{DataTransfer, Event};
+
+use web_sys::{DataTransfer, DragEvent};
 
 fn main() {
     console_error_panic_hook::set_once();
@@ -99,11 +99,9 @@ fn DraggableItem<G: Html>(cx: Scope, a: usize, c: ContentItem) -> View<G> {
     let a_index = create_signal(cx, a);
     let c_item = create_signal(cx, c);
 
-    let handle_dragstart = |e: Event| {
+    let handle_dragstart = |e: DragEvent| {
         let dom = node_ref.get::<DomNode>();
-        let drag_event_ref: &web_sys::DragEvent = e.unchecked_ref();
-        let drag_event = drag_event_ref.clone();
-        let data_transf: DataTransfer = drag_event.data_transfer().unwrap();
+        let data_transf: DataTransfer = e.data_transfer().unwrap();
         if e.type_().contains("dragstart") {
             data_transf.set_effect_allowed("move");
             data_transf
@@ -112,35 +110,33 @@ fn DraggableItem<G: Html>(cx: Scope, a: usize, c: ContentItem) -> View<G> {
 
             log!(format!("Transfer {:?}", &a_index.get()));
         }
-        dom.set_attribute("style", "opacity: 0.2");
+        dom.set_attribute("style".into(), "opacity: 0.2".into());
     };
 
-    let handle_dragend = |_e: Event| {
+    let handle_dragend = |_e: DragEvent| {
         let dom = node_ref.get::<DomNode>();
-        dom.set_attribute("style", "opacity: 1");
+        dom.set_attribute("style".into(), "opacity: 1".into());
     };
-    let handle_dragenter = |_e: Event| {
+    let handle_dragenter = |_e: DragEvent| {
         let dom = node_ref.get::<DomNode>();
         dom.add_class("drag-over");
     };
 
-    let handle_dragover = |e: Event| {
+    let handle_dragover = |e: DragEvent| {
         let dom = node_ref.get::<DomNode>();
         e.prevent_default();
         dom.add_class("drag-over");
     };
 
-    let handle_dragleave = |_e: Event| {
+    let handle_dragleave = |_e: DragEvent| {
         let dom = node_ref.get::<DomNode>();
         dom.remove_class("drag-over");
     };
 
-    let handle_drop = move |e: Event| {
+    let handle_drop = move |e: DragEvent| {
         let _dom = node_ref.get::<DomNode>();
 
-        let drag_event_ref: &web_sys::DragEvent = e.unchecked_ref();
-        let drag_event = drag_event_ref.clone();
-        let data_transf: DataTransfer = drag_event.data_transfer().unwrap();
+        let data_transf: DataTransfer = e.data_transfer().unwrap();
         let data = data_transf.get_data("text/html").unwrap();
         log!(format!("{:?}", data));
         log!(format!("{:?}", &a_index.get()));
