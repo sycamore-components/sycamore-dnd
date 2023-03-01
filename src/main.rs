@@ -165,15 +165,11 @@ fn DraggableItem<G: Html>(cx: Scope, a: usize, c: ContentItem) -> View<G> {
 #[component]
 fn DropZone<G: Html>(cx: Scope) -> View<G> {
     let node_ref = create_node_ref(cx);
-    let item_contents = use_context::<RcSignal<ItemSwitch>>(cx);
+    let item_switch = use_context::<ItemSwitch>(cx);
+    let item_contents = item_switch.contents.get();
 
     let values = create_memo(cx, move || {
         let it_sw = item_contents
-            .get()
-            .as_ref()
-            .clone()
-            .contents
-            .get()
             .as_ref()
             .clone()
             .items;
