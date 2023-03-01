@@ -66,3 +66,7 @@ h1 {
 .hide {
     display: none;
 }
+
+.dragging {
+    opacity: 0.2;
+}

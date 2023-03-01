@@ -2,6 +2,7 @@
 
 use gloo::console::log;
 use serde::{Deserialize, Serialize};
+use sycadrop::{Draggable, DropEffect, DropTarget};
 use sycamore::prelude::*;
 
 use web_sys::{DataTransfer, DragEvent};
@@ -12,7 +13,7 @@ fn main() {
     sycamore::render(|cx| {
         view! { cx,
             p { "Hello, World!" }
-                ContainerWidget()
+            App()
         }
     });
 }
@@ -56,6 +57,89 @@ impl Contents {
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct ItemSwitch {
     contents: RcSignal<Contents>,
+}
+
+#[component]
+fn App<G: Html>(cx: Scope) -> View<G> {
+    let contents = create_rc_signal(
+        vec![
+            ContentItem {
+                id: 0,
+                name: "Test item 0".to_string(),
+            },
+            ContentItem {
+                id: 1,
+                name: "Test item 1".to_string(),
+            },
+            ContentItem {
+                id: 2,
+                name: "Test item 2".to_string(),
+            },
+            ContentItem {
+                id: 3,
+                name: "Test item 3".to_string(),
+            },
+        ]
+        .into_iter()
+        .enumerate()
+        .map(|(i, item)| (create_rc_signal(i), item))
+        .collect::<Vec<_>>(),
+    );
+
+    let on_drop = create_ref(cx, {
+        let contents = contents.clone();
+        move |target_index: RcSignal<usize>| {
+            let contents = contents.clone();
+            Box::new(move |transfer: DataTransfer| {
+                let dragged_index: usize = transfer.get_data("text/html").unwrap().parse().unwrap();
+                let target_index = *target_index.get();
+                log!("Swapping {} and {}", target_index, dragged_index);
+                let mut contents = contents.modify();
+                contents.swap(dragged_index, target_index);
+                contents
+                    .get_mut(dragged_index)
+                    .unwrap()
+                    .0
+                    .set(dragged_index);
+                contents.get_mut(target_index).unwrap().0.set(target_index)
+            })
+        }
+    });
+
+    let contents = create_ref(cx, contents);
+
+    view! { cx,
+        div(class = "container") {
+            div(class="box") {
+                Keyed(
+                    iterable=contents,
+                    view= move |cx, (index, item)| {
+                        let set_data = {
+                            let index = index.clone();
+                            move |transfer: DataTransfer| {
+                            transfer.set_data("text/html", &index.get().to_string()).unwrap()
+                        }
+                    };
+
+                        view! { cx,
+                            Draggable(allowed_effect = DropEffect::Move, set_data = set_data, attr:class = "item", class_dragging = "dragging") {
+                                DropTarget(
+                                    on_drop = on_drop(index.clone()),
+                                    class_drop_hover = "drag-over",
+                                    attr:style = "width:100%;height:100%",
+                                    attr:data-index = &index.get()
+                                ) {
+                                    (item.name)
+                                }
+                            }
+                        }
+                    },
+
+                    key=|(_, item)| item.id,
+                )
+            }
+        }
+    }
 }
 
 #[component]
@@ -149,7 +233,7 @@ fn DraggableItem<G: Html>(cx: Scope, a: usize, c: ContentItem) -> View<G> {
     };
 
     view! { cx,
-        div(ref=node_ref, draggable=true, class="item", on:dragstart=handle_dragstart, on:dragend=handle_dragend, on:dragenter=handle_dragenter, on:dragover=handle_dragover, on:dragleave=handle_dragleave, on:drop=handle_drop) {
+        div(ref=node_ref, draggable=true, class="item", on:dragstart=handle_dragstart, on:dragend=handle_dragend, on:dragenter=handle_dragenter, on:dragover=handle_dragover, on:dragleave=handle_dragleave, on:drop=handle_drop, data-index = a_index.get()) {
             (c_item.get().name)
         }
     }
@@ -162,10 +246,13 @@ fn DropZone<G: Html>(cx: Scope) -> View<G> {
 
     let values = create_memo(cx, move || {
         let it_sw = item_switch.contents.get().as_ref().clone().items;
-        it_sw
+        let res = it_sw
             .into_iter()
             .enumerate()
-            .collect::<Vec<(usize, ContentItem)>>()
+            .collect::<Vec<(usize, ContentItem)>>();
+
+        log!("{}", format!("{:?}", res));
+        res
     });
 
     view! { cx,
