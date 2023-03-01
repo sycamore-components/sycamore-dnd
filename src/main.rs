@@ -1,6 +1,6 @@
 // https://htmldom.dev/make-a-draggable-element/
 
-use gloo::{console::log};
+use gloo::console::log;
 use serde::{Deserialize, Serialize};
 use sycamore::prelude::*;
 use wasm_bindgen::*;
@@ -144,13 +144,10 @@ fn DraggableItem<G: Html>(cx: Scope, a: usize, c: ContentItem) -> View<G> {
         let data = data_transf.get_data("text/html").unwrap();
         log!(format!("{:?}", data));
         log!(format!("{:?}", &a_index.get()));
-        let switch_item = use_context::<RcSignal<ItemSwitch>>(cx);
-        let sv = switch_item.get().as_ref().clone();
-        let _t = sv
+        let switch_item = use_context::<ItemSwitch>(cx);
+        let _t = switch_item
             .contents
-            .get()
-            .as_ref()
-            .clone()
+            .modify()
             .swap_elements(data.parse::<usize>().unwrap(), *a_index.get())
             .unwrap();
     };
@@ -166,13 +163,9 @@ fn DraggableItem<G: Html>(cx: Scope, a: usize, c: ContentItem) -> View<G> {
 fn DropZone<G: Html>(cx: Scope) -> View<G> {
     let node_ref = create_node_ref(cx);
     let item_switch = use_context::<ItemSwitch>(cx);
-    let item_contents = item_switch.contents.get();
 
     let values = create_memo(cx, move || {
-        let it_sw = item_contents
-            .as_ref()
-            .clone()
-            .items;
+        let it_sw = item_switch.contents.get().as_ref().clone().items;
         it_sw
             .into_iter()
             .enumerate()
