@@ -162,16 +162,17 @@ impl<T: DeserializeOwned> FromTransfer for T {
     }
 }
 
-pub struct DraggableBuilder<'cx, T: AsTransfer + 'static> {
+pub struct DraggableBuilder<'cx, G: Html, T: AsTransfer + 'static> {
     scope: Scope<'cx>,
     data: Option<T>,
     #[allow(clippy::type_complexity)]
     set_data: Option<Box<dyn Fn(&DataTransfer) + 'cx>>,
     dragging_class: String,
     allowed_effect: DropEffect,
+    node_ref: Option<&'cx NodeRef<G>>,
 }
 
-impl<'cx, T: AsTransfer> DraggableBuilder<'cx, T> {
+impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
     fn new(scope: Scope<'cx>) -> Self {
         Self {
             scope,
@@ -179,16 +180,18 @@ impl<'cx, T: AsTransfer> DraggableBuilder<'cx, T> {
             set_data: None,
             dragging_class: Default::default(),
             allowed_effect: Default::default(),
+            node_ref: None,
         }
     }
 
-    pub fn data<Data: AsTransfer>(self, data: Data) -> DraggableBuilder<'cx, Data> {
+    pub fn data<Data: AsTransfer>(self, data: Data) -> DraggableBuilder<'cx, G, Data> {
         DraggableBuilder {
             data: Some(data),
             dragging_class: self.dragging_class,
             allowed_effect: self.allowed_effect,
             set_data: self.set_data,
             scope: self.scope,
+            node_ref: self.node_ref,
         }
     }
 
@@ -207,32 +210,41 @@ impl<'cx, T: AsTransfer> DraggableBuilder<'cx, T> {
         self
     }
 
-    pub fn build<G: Html>(self) -> &'cx NodeRef<G> {
-        let node = create_node_ref(self.scope);
+    pub fn node_ref(mut self, node_ref: &'cx NodeRef<G>) -> Self {
+        self.node_ref = Some(node_ref);
+        self
+    }
+
+    pub fn build(self) -> &'cx NodeRef<G> {
+        let node = self.node_ref.unwrap_or_else(|| create_node_ref(self.scope));
         create_draggable_effect(self.scope, self, node);
         node
     }
 }
 
-pub fn create_draggable<T: AsTransfer + 'static>(cx: Scope<'_>) -> DraggableBuilder<'_, ()> {
+pub fn create_draggable<G: Html, T: AsTransfer + 'static>(
+    cx: Scope<'_>,
+) -> DraggableBuilder<'_, G, ()> {
     DraggableBuilder::new(cx)
 }
 
-pub struct DroppableBuilder<'cx, T: FromTransfer + 'static = ()> {
+pub struct DroppableBuilder<'cx, G: Html, T: FromTransfer + 'static = ()> {
     scope: Scope<'cx>,
     on_drop: Option<Box<dyn Fn(T) + 'cx>>,
     #[allow(clippy::type_complexity)]
     accept: Option<Box<dyn Fn(&T) -> bool + 'cx>>,
     hovering_class: String,
+    node_ref: Option<&'cx NodeRef<G>>,
 }
 
-impl<'cx, T: FromTransfer + 'static> DroppableBuilder<'cx, T> {
+impl<'cx, G: Html, T: FromTransfer + 'static> DroppableBuilder<'cx, G, T> {
     fn new(scope: Scope<'cx>) -> Self {
         Self {
             scope,
             on_drop: None,
             accept: None,
             hovering_class: Default::default(),
+            node_ref: None,
         }
     }
 
@@ -251,26 +263,31 @@ impl<'cx, T: FromTransfer + 'static> DroppableBuilder<'cx, T> {
         self
     }
 
-    pub fn build<G: Html>(self) -> &'cx NodeRef<G> {
-        let node = create_node_ref(self.scope);
+    pub fn node_ref(mut self, node_ref: &'cx NodeRef<G>) -> Self {
+        self.node_ref = Some(node_ref);
+        self
+    }
+
+    pub fn build(self) -> &'cx NodeRef<G> {
+        let node = self.node_ref.unwrap_or_else(|| create_node_ref(self.scope));
         create_droppable_effect(self.scope, self, node);
         node
     }
 }
 
-pub fn create_droppable<T: FromTransfer>(cx: Scope<'_>) -> DroppableBuilder<'_, T> {
+pub fn create_droppable<G: Html, T: FromTransfer>(cx: Scope<'_>) -> DroppableBuilder<'_, G, T> {
     DroppableBuilder::new(cx)
 }
 
 pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
     cx: Scope<'cx>,
-    options: DraggableBuilder<'cx, T>,
+    options: DraggableBuilder<'cx, G, T>,
     node_ref: &'cx NodeRef<G>,
 ) {
     // SAFETY: This is only needed because of limitations in Rust's type system. The lifetime of
     // this reference is `'cx` anyways, so casting the builder to be `'static` is safe.
     let options = create_ref(cx, unsafe {
-        std::mem::transmute::<_, DraggableBuilder<'static, T>>(options)
+        std::mem::transmute::<_, DraggableBuilder<'static, G, T>>(options)
     });
 
     create_effect(cx, move || {
@@ -278,6 +295,7 @@ pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
             let on_drag_start = {
                 let node = node.clone();
                 move |e: DragEvent| {
+                    log!("Drag start", format!("{node:?}"));
                     let transfer = e.data_transfer().unwrap();
                     transfer.set_effect_allowed(options.allowed_effect.as_js());
                     if let Some(data) = options.data.as_ref() {
@@ -295,12 +313,13 @@ pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
             let on_drag_end = {
                 let node = node.clone();
                 move |_: DragEvent| {
+                    log!("Drag end", format!("{node:?}"));
                     node.remove_class(&options.dragging_class);
                     node.remove_attribute("data-dragging".into());
                 }
             };
 
-            node.set_attribute("draggable".into(), "".into());
+            node.set_attribute("draggable".into(), "true".into());
             node.event(cx, ev::dragstart, on_drag_start);
             node.event(cx, ev::dragend, on_drag_end);
         }
@@ -309,13 +328,13 @@ pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
 
 pub fn create_droppable_effect<'cx, G: Html, T: FromTransfer + 'static>(
     cx: Scope<'cx>,
-    options: DroppableBuilder<'cx, T>,
+    options: DroppableBuilder<'cx, G, T>,
     node_ref: &'cx NodeRef<G>,
 ) {
     // SAFETY: This is only needed because of limitations in Rust's type system. The lifetime of
     // this reference is `'cx` anyways, so casting the builder to be `'static` is safe.
     let options = create_ref(cx, unsafe {
-        std::mem::transmute::<_, DroppableBuilder<'static, T>>(options)
+        std::mem::transmute::<_, DroppableBuilder<'static, G, T>>(options)
     });
 
     create_effect(cx, move || {
@@ -323,6 +342,7 @@ pub fn create_droppable_effect<'cx, G: Html, T: FromTransfer + 'static>(
             let on_drag_enter = {
                 let node = node.clone();
                 move |e: DragEvent| {
+                    log!("Drag enter", format!("{node:?}"));
                     let should_accept = options
                         .accept
                         .as_ref()
@@ -344,6 +364,7 @@ pub fn create_droppable_effect<'cx, G: Html, T: FromTransfer + 'static>(
                 let node = node.clone();
                 move |_: DragEvent| {
                     node.remove_class(&options.hovering_class);
+                    log!("Drag leave", format!("{node:?}"));
                 }
             };
 
@@ -362,19 +383,24 @@ pub fn create_droppable_effect<'cx, G: Html, T: FromTransfer + 'static>(
                 }
             };
 
-            let on_drop = |e: DragEvent| {
-                if let Some((on_drop, data)) = options
-                    .on_drop
-                    .as_ref()
-                    .zip(T::from_transfer(&e.data_transfer().unwrap()))
-                {
-                    if options
-                        .accept
+            let on_drop = {
+                let node = node.clone();
+                move |e: DragEvent| {
+                    node.remove_class(&options.hovering_class);
+
+                    if let Some((on_drop, data)) = options
+                        .on_drop
                         .as_ref()
-                        .map(|accept| accept(&data))
-                        .unwrap_or(true)
+                        .zip(T::from_transfer(&e.data_transfer().unwrap()))
                     {
-                        on_drop(data);
+                        if options
+                            .accept
+                            .as_ref()
+                            .map(|accept| accept(&data))
+                            .unwrap_or(true)
+                        {
+                            on_drop(data);
+                        }
                     }
                 }
             };
