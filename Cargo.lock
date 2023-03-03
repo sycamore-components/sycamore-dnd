@@ -215,7 +215,7 @@ dependencies = [
  "console_error_panic_hook",
  "log",
  "serde",
- "sycamore 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
+ "sycamore",
  "sycamore-dnd",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -359,7 +359,7 @@ version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
  "log",
- "sycamore 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
+ "sycamore",
  "sycamore-dnd",
  "wasm-bindgen",
  "wasm-logger",
@@ -396,7 +396,7 @@ dependencies = [
  "console_error_panic_hook",
  "log",
  "serde",
- "sycamore 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
+ "sycamore",
  "sycamore-dnd",
  "wasm-bindgen",
  "wasm-logger",
@@ -405,26 +405,6 @@ dependencies = [
 [[package]]
 name = "sycamore"
 version = "0.8.2"
-source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
-dependencies = [
- "futures",
- "hashbrown 0.13.2",
- "indexmap",
- "js-sys",
- "paste",
- "sycamore-core 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "sycamore-futures 0.8.0 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "sycamore-macro 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "sycamore-reactive 0.8.1 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "sycamore-web 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
-
-[[package]]
-name = "sycamore"
-version = "0.8.2"
 source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "futures",
@@ -432,11 +412,11 @@ dependencies = [
  "indexmap",
  "js-sys",
  "paste",
- "sycamore-core 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git)",
- "sycamore-futures 0.8.0 (git+https://github.com/sycamore-rs/sycamore.git)",
- "sycamore-macro 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git)",
- "sycamore-reactive 0.8.1 (git+https://github.com/sycamore-rs/sycamore.git)",
- "sycamore-web 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git)",
+ "sycamore-core",
+ "sycamore-futures",
+ "sycamore-macro",
+ "sycamore-reactive",
+ "sycamore-web",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -445,21 +425,11 @@ dependencies = [
 [[package]]
 name = "sycamore-core"
 version = "0.8.2"
-source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
-dependencies = [
- "hashbrown 0.13.2",
- "sycamore-futures 0.8.0 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "sycamore-reactive 0.8.1 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
-]
-
-[[package]]
-name = "sycamore-core"
-version = "0.8.2"
 source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "hashbrown 0.13.2",
- "sycamore-futures 0.8.0 (git+https://github.com/sycamore-rs/sycamore.git)",
- "sycamore-reactive 0.8.1 (git+https://github.com/sycamore-rs/sycamore.git)",
+ "sycamore-futures",
+ "sycamore-reactive",
 ]
 
 [[package]]
@@ -471,7 +441,7 @@ dependencies = [
  "log",
  "serde",
  "serde_json",
- "sycamore 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git)",
+ "sycamore",
  "wasm-bindgen",
  "wasm-logger",
  "web-sys",
@@ -480,35 +450,12 @@ dependencies = [
 [[package]]
 name = "sycamore-futures"
 version = "0.8.0"
-source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
-dependencies = [
- "futures",
- "sycamore-reactive 0.8.1 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "tokio",
- "wasm-bindgen-futures",
-]
-
-[[package]]
-name = "sycamore-futures"
-version = "0.8.0"
 source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "futures",
- "sycamore-reactive 0.8.1 (git+https://github.com/sycamore-rs/sycamore.git)",
+ "sycamore-reactive",
  "tokio",
  "wasm-bindgen-futures",
-]
-
-[[package]]
-name = "sycamore-macro"
-version = "0.8.2"
-source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
-dependencies = [
- "once_cell",
- "proc-macro2",
- "quote",
- "rand",
- "syn",
 ]
 
 [[package]]
@@ -521,20 +468,6 @@ dependencies = [
  "quote",
  "rand",
  "syn",
-]
-
-[[package]]
-name = "sycamore-reactive"
-version = "0.8.1"
-source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
-dependencies = [
- "bumpalo",
- "getrandom",
- "hashbrown 0.13.2",
- "indexmap",
- "serde",
- "slotmap",
- "smallvec",
 ]
 
 [[package]]
@@ -554,22 +487,6 @@ dependencies = [
 [[package]]
 name = "sycamore-web"
 version = "0.8.2"
-source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
-dependencies = [
- "hashbrown 0.13.2",
- "html-escape",
- "indexmap",
- "js-sys",
- "once_cell",
- "sycamore-core 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "sycamore-reactive 0.8.1 (git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5)",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "sycamore-web"
-version = "0.8.2"
 source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "hashbrown 0.13.2",
@@ -577,8 +494,8 @@ dependencies = [
  "indexmap",
  "js-sys",
  "once_cell",
- "sycamore-core 0.8.2 (git+https://github.com/sycamore-rs/sycamore.git)",
- "sycamore-reactive 0.8.1 (git+https://github.com/sycamore-rs/sycamore.git)",
+ "sycamore-core",
+ "sycamore-reactive",
  "wasm-bindgen",
  "web-sys",
 ]
