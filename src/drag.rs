@@ -109,6 +109,9 @@ pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
                     if let Some(set_data) = options.set_data.as_ref() {
                         set_data(&transfer);
                     }
+                    if options.data.is_none() && options.set_data.is_none() {
+                        ().write_to_transfer(&transfer);
+                    }
                     if let Some((image, offset_x, offset_y)) = options.drag_image.as_ref() {
                         transfer.set_drag_image(image, *offset_x, *offset_y);
                     }
