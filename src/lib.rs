@@ -296,6 +296,7 @@ pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
                 let node = node.clone();
                 move |e: DragEvent| {
                     log!("Drag start", format!("{node:?}"));
+
                     let transfer = e.data_transfer().unwrap();
                     transfer.set_effect_allowed(options.allowed_effect.as_js());
                     if let Some(data) = options.data.as_ref() {
@@ -314,6 +315,7 @@ pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
                 let node = node.clone();
                 move |_: DragEvent| {
                     log!("Drag end", format!("{node:?}"));
+
                     node.remove_class(&options.dragging_class);
                     node.remove_attribute("data-dragging".into());
                 }
@@ -343,6 +345,8 @@ pub fn create_droppable_effect<'cx, G: Html, T: FromTransfer + 'static>(
                 let node = node.clone();
                 move |e: DragEvent| {
                     log!("Drag enter", format!("{node:?}"));
+                    e.prevent_default();
+
                     let should_accept = options
                         .accept
                         .as_ref()
@@ -362,7 +366,9 @@ pub fn create_droppable_effect<'cx, G: Html, T: FromTransfer + 'static>(
 
             let on_drag_leave = {
                 let node = node.clone();
-                move |_: DragEvent| {
+                move |e: DragEvent| {
+                    e.prevent_default();
+
                     node.remove_class(&options.hovering_class);
                     log!("Drag leave", format!("{node:?}"));
                 }
