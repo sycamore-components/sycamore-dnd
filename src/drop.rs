@@ -92,11 +92,9 @@ fn create_droppable_effect<'cx, G: Html, T: FromTransfer + 'static>(
     options: DroppableBuilder<'cx, G, T>,
     node_ref: &'cx NodeRef<G>,
 ) {
-    // SAFETY: This is only needed because of limitations in Rust's type system. The lifetime of
-    // this reference is `'cx` anyways, so casting the builder to be `'static` is safe.
-    let options = create_ref(cx, unsafe {
-        std::mem::transmute::<_, DroppableBuilder<'static, G, T>>(options)
-    });
+    // SAFETY: This is safe as long as the builder has no custom `Drop` implementation
+    // See documentation for `create_ref_unsafe`.
+    let options = unsafe { create_ref_unsafe(cx, options) };
 
     create_effect(cx, move || {
         if let Some(node) = node_ref.try_get_raw() {

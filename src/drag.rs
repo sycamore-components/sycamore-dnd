@@ -29,7 +29,7 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
     }
 
     /// Sets the data that gets serialized to the [`DataTransfer`]. If you need to do custom
-    /// serialization, use [`set_data`] instead.
+    /// serialization, use `set_data` instead.
     pub fn data<Data: AsTransfer>(self, data: Data) -> DraggableBuilder<'cx, G, Data> {
         DraggableBuilder {
             data: Some(data),
@@ -70,14 +70,14 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
     }
 
     /// Sets an HTML element to be shown when dragging the item. Creating this can be annoying - if
-    /// an image is all that's needed use [`drag_image`] instead.
+    /// an image is all that's needed use `drag_image` instead.
     pub fn drag_element(mut self, element: impl JsCast, x_offset: i32, y_offset: i32) -> Self {
         self.drag_image = Some((element.unchecked_into::<Element>(), x_offset, y_offset));
         self
     }
 
     /// Sets an `<img>` as a drag image with the specified source and offset. If you need more control
-    /// over the element displayed, use [`drag_element`] instead.
+    /// over the element displayed, use `drag_element` instead.
     pub fn drag_image(self, src: impl AsRef<str>, x_offset: i32, y_offset: i32) -> Self {
         let image = web_sys::HtmlImageElement::new().unwrap();
         image.set_src(src.as_ref());
@@ -124,11 +124,9 @@ fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
     options: DraggableBuilder<'cx, G, T>,
     node_ref: &'cx NodeRef<G>,
 ) {
-    // SAFETY: This is only needed because of limitations in Rust's type system. The lifetime of
-    // this reference is `'cx` anyways, so casting the builder to be `'static` is safe.
-    let options = create_ref(cx, unsafe {
-        std::mem::transmute::<_, DraggableBuilder<'static, G, T>>(options)
-    });
+    // SAFETY: This is safe as long as the builder has no custom `Drop` implementation
+    // See documentation for `create_ref_unsafe`.
+    let options = unsafe { create_ref_unsafe(cx, options) };
 
     create_effect(cx, move || {
         if let Some(node) = node_ref.try_get_raw() {
