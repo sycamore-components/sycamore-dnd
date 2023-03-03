@@ -1,6 +1,6 @@
 use crate::{AsTransfer, DropEffect};
-use sycamore::{prelude::*, web::html::ev};
-use web_sys::{DataTransfer, DragEvent};
+use sycamore::{prelude::*, view::ToView, web::html::ev};
+use web_sys::{DataTransfer, DragEvent, Element};
 
 pub struct DraggableBuilder<'cx, G: Html, T: AsTransfer + 'static> {
     scope: Scope<'cx>,
@@ -9,6 +9,7 @@ pub struct DraggableBuilder<'cx, G: Html, T: AsTransfer + 'static> {
     set_data: Option<Box<dyn Fn(&DataTransfer) + 'cx>>,
     dragging_class: String,
     allowed_effect: DropEffect,
+    drag_image: Option<(View<G>, i32, i32)>,
     node_ref: Option<&'cx NodeRef<G>>,
 }
 
@@ -20,6 +21,7 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
             set_data: None,
             dragging_class: Default::default(),
             allowed_effect: Default::default(),
+            drag_image: None,
             node_ref: None,
         }
     }
@@ -32,15 +34,16 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
             set_data: self.set_data,
             scope: self.scope,
             node_ref: self.node_ref,
+            drag_image: self.drag_image,
         }
     }
 
-    pub fn set_data<F: Fn(&DataTransfer) + 'cx>(mut self, f: F) -> Self {
+    pub fn set_data(mut self, f: impl Fn(&DataTransfer) + 'cx) -> Self {
         self.set_data = Some(Box::new(f));
         self
     }
 
-    pub fn dragging_class<S: Into<String>>(mut self, class: S) -> Self {
+    pub fn dragging_class(mut self, class: impl Into<String>) -> Self {
         self.dragging_class = class.into();
         self
     }
@@ -52,6 +55,11 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
 
     pub fn node_ref(mut self, node_ref: &'cx NodeRef<G>) -> Self {
         self.node_ref = Some(node_ref);
+        self
+    }
+
+    pub fn drag_image(mut self, image: impl ToView<G>, x_offset: i32, y_offset: i32) -> Self {
+        self.drag_image = Some((image.to_view(), x_offset, y_offset));
         self
     }
 
@@ -93,6 +101,16 @@ pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
                     }
                     if let Some(set_data) = options.set_data.as_ref() {
                         set_data(&transfer);
+                    }
+                    if let Some((image, offset_x, offset_y)) = options.drag_image.as_ref() {
+                        if let Some(node) = image.clone().flatten().get(0) {
+                            let node_ref = create_node_ref(cx);
+                            node_ref.set(node.clone());
+                            if let Some(node) = node_ref.try_get::<DomNode>() {
+                                let image = node.unchecked_into::<Element>();
+                                transfer.set_drag_image(&image, *offset_x, *offset_y);
+                            }
+                        }
                     }
 
                     node.add_class(&options.dragging_class);
