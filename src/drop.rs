@@ -130,6 +130,7 @@ pub fn create_droppable_effect<'cx, G: Html, T: FromTransfer + 'static>(
                             .map(|accept| accept(&data))
                             .unwrap_or(true)
                         {
+                            e.prevent_default();
                             on_drop(data);
                         }
                     }
