@@ -21,7 +21,7 @@ struct ContentItem {
 }
 
 #[component]
-fn App<'cx, G: Html>(cx: Scope<'cx>) -> View<G> {
+fn App<G: Html>(cx: Scope) -> View<G> {
     let text = create_ref(cx, create_rc_signal("Drop here".to_string()));
 
     let drop = create_droppable(cx)

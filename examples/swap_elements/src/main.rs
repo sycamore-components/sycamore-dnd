@@ -20,7 +20,7 @@ struct ContentItem {
 }
 
 #[component]
-fn App<'cx, G: Html>(cx: Scope<'cx>) -> View<G> {
+fn App<G: Html>(cx: Scope) -> View<G> {
     let contents = create_signal(
         cx,
         vec![

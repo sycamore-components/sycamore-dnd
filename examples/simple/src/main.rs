@@ -12,7 +12,7 @@ fn main() {
 }
 
 #[component]
-fn App<'cx, G: Html>(cx: Scope<'cx>) -> View<G> {
+fn App<G: Html>(cx: Scope) -> View<G> {
     let inside = create_signal(cx, false);
 
     let drop_inside = create_droppable(cx)
