@@ -3,6 +3,7 @@ use sycamore::{prelude::*, web::html::ev};
 use wasm_bindgen::JsCast;
 use web_sys::{DataTransfer, DragEvent, Element};
 
+/// The builder used to configure a draggable element
 pub struct DraggableBuilder<'cx, G: Html, T: AsTransfer + 'static> {
     scope: Scope<'cx>,
     data: Option<T>,
@@ -27,6 +28,8 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
         }
     }
 
+    /// Sets the data that gets serialized to the [`DataTransfer`]. If you need to do custom
+    /// serialization, use [`set_data`] instead.
     pub fn data<Data: AsTransfer>(self, data: Data) -> DraggableBuilder<'cx, G, Data> {
         DraggableBuilder {
             data: Some(data),
@@ -39,37 +42,50 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
         }
     }
 
+    /// Manually serialize the data to a [`DataTransfer`] object. This will be run every time the
+    /// item is dragged.
     pub fn set_data(mut self, f: impl Fn(&DataTransfer) + 'cx) -> Self {
         self.set_data = Some(Box::new(f));
         self
     }
 
+    /// Set a class or class list to be added when the element is being dragged. The class is
+    /// automatically removed when the drag ends.
     pub fn dragging_class(mut self, class: impl Into<String>) -> Self {
         self.dragging_class = class.into();
         self
     }
 
+    /// Set the [`DropEffect`] allowed when dropping the element.
     pub fn allowed_effect(mut self, effect: DropEffect) -> Self {
         self.allowed_effect = effect;
         self
     }
 
+    /// Use an existing [`NodeRef`] instead of creating a new one. This is useful when combining
+    /// drag and drop one one element, or when using custom logic that needs a [`NodeRef`].
     pub fn node_ref(mut self, node_ref: &'cx NodeRef<G>) -> Self {
         self.node_ref = Some(node_ref);
         self
     }
 
+    /// Sets an HTML element to be shown when dragging the item. Creating this can be annoying - if
+    /// an image is all that's needed use [`drag_image`] instead.
     pub fn drag_element(mut self, element: impl JsCast, x_offset: i32, y_offset: i32) -> Self {
         self.drag_image = Some((element.unchecked_into::<Element>(), x_offset, y_offset));
         self
     }
 
+    /// Sets an `<img>` as a drag image with the specified source and offset. If you need more control
+    /// over the element displayed, use [`drag_element`] instead.
     pub fn drag_image(self, src: impl AsRef<str>, x_offset: i32, y_offset: i32) -> Self {
         let image = web_sys::HtmlImageElement::new().unwrap();
         image.set_src(src.as_ref());
         self.drag_element(image, x_offset, y_offset)
     }
 
+    /// Creates the dragging effects and returns a [`NodeRef`] that needs to be set as the `ref`
+    /// attribute on the draggable element.
     pub fn build(self) -> &'cx NodeRef<G> {
         let node = self.node_ref.unwrap_or_else(|| create_node_ref(self.scope));
         create_draggable_effect(self.scope, self, node);
@@ -77,13 +93,33 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
     }
 }
 
-pub fn create_draggable<G: Html, T: AsTransfer + 'static>(
-    cx: Scope<'_>,
-) -> DraggableBuilder<'_, G, ()> {
+/// Create a draggable element. The [`DraggableBuilder`] can be used to further configure the
+/// dragging behavior.
+///
+/// # Example
+///
+/// ```
+/// # use sycamore::prelude::*;
+/// # use sycamore_dnd::*;
+/// #[component]
+/// fn Item<G: Html>(cx: Scope) -> View<G> {
+///     let drag = create_draggable(cx)
+///         .data("Hello World!")
+///         .dragging_class("opacity-20")
+///         .build();
+///
+///     view! { cx,
+///         div(class = "item", ref = drag) {
+///             "Drag me"
+///         }
+///     }
+/// }
+/// ```
+pub fn create_draggable<G: Html>(cx: Scope<'_>) -> DraggableBuilder<'_, G, ()> {
     DraggableBuilder::new(cx)
 }
 
-pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
+fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
     cx: Scope<'cx>,
     options: DraggableBuilder<'cx, G, T>,
     node_ref: &'cx NodeRef<G>,
