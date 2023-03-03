@@ -1,14 +1,12 @@
-use std::ops::Deref;
-
 use serde::{de::DeserializeOwned, Serialize};
-
-pub use web_sys::DataTransfer;
+use std::ops::Deref;
 
 mod drag;
 mod drop;
 
 pub use drag::*;
 pub use drop::*;
+pub use web_sys::{DataTransfer, DataTransferItem, DataTransferItemList, File, FileList};
 
 #[derive(Clone, Copy)]
 pub enum DropEffect {
