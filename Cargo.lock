@@ -215,8 +215,8 @@ dependencies = [
  "console_error_panic_hook",
  "log",
  "serde",
- "sycadrop",
  "sycamore",
+ "sycamore-dnd",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-logger",
@@ -354,6 +354,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "simple"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "log",
+ "sycamore",
+ "sycamore-dnd",
+ "wasm-bindgen",
+ "wasm-logger",
+]
+
+[[package]]
 name = "slab"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -384,26 +396,10 @@ dependencies = [
  "console_error_panic_hook",
  "log",
  "serde",
- "sycadrop",
  "sycamore",
+ "sycamore-dnd",
  "wasm-bindgen",
  "wasm-logger",
- "web-sys",
-]
-
-[[package]]
-name = "sycadrop"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "console_log",
- "log",
- "serde",
- "serde_json",
- "sycamore",
- "wasm-bindgen",
- "wasm-logger",
- "web-sys",
 ]
 
 [[package]]
@@ -434,6 +430,21 @@ dependencies = [
  "hashbrown 0.13.2",
  "sycamore-futures",
  "sycamore-reactive",
+]
+
+[[package]]
+name = "sycamore-dnd"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "console_log",
+ "log",
+ "serde",
+ "serde_json",
+ "sycamore",
+ "wasm-bindgen",
+ "wasm-logger",
+ "web-sys",
 ]
 
 [[package]]

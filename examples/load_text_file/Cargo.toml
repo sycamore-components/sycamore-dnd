@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sycadrop = { path = "../.." }
+sycamore-dnd = { path = "../.." }
 serde = "1"
 log = "0.4"
 wasm-logger = "0.2"

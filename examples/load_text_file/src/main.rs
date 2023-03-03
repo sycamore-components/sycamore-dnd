@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use sycadrop::{create_droppable, RawTransfer};
 use sycamore::prelude::*;
+use sycamore_dnd::{create_droppable, RawTransfer};
 use wasm_bindgen_futures::JsFuture;
 
 fn main() {
