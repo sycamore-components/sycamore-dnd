@@ -22,17 +22,17 @@ impl<'cx, G: Html, T: FromTransfer + 'static> DroppableBuilder<'cx, G, T> {
         }
     }
 
-    pub fn on_drop<F: Fn(T) + 'cx>(mut self, f: F) -> Self {
+    pub fn on_drop(mut self, f: impl Fn(T) + 'cx) -> Self {
         self.on_drop = Some(Box::new(f));
         self
     }
 
-    pub fn accept<F: Fn(&T) -> bool + 'cx>(mut self, f: F) -> Self {
+    pub fn accept(mut self, f: impl Fn(&T) -> bool + 'cx) -> Self {
         self.accept = Some(Box::new(f));
         self
     }
 
-    pub fn hovering_class<S: Into<String>>(mut self, class: S) -> Self {
+    pub fn hovering_class(mut self, class: impl Into<String>) -> Self {
         self.hovering_class = class.into();
         self
     }

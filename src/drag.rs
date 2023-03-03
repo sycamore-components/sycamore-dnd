@@ -1,5 +1,6 @@
 use crate::{AsTransfer, DropEffect};
-use sycamore::{prelude::*, view::ToView, web::html::ev};
+use sycamore::{prelude::*, web::html::ev};
+use wasm_bindgen::JsCast;
 use web_sys::{DataTransfer, DragEvent, Element};
 
 pub struct DraggableBuilder<'cx, G: Html, T: AsTransfer + 'static> {
@@ -9,7 +10,7 @@ pub struct DraggableBuilder<'cx, G: Html, T: AsTransfer + 'static> {
     set_data: Option<Box<dyn Fn(&DataTransfer) + 'cx>>,
     dragging_class: String,
     allowed_effect: DropEffect,
-    drag_image: Option<(View<G>, i32, i32)>,
+    drag_image: Option<(Element, i32, i32)>,
     node_ref: Option<&'cx NodeRef<G>>,
 }
 
@@ -58,9 +59,15 @@ impl<'cx, G: Html, T: AsTransfer> DraggableBuilder<'cx, G, T> {
         self
     }
 
-    pub fn drag_image(mut self, image: impl ToView<G>, x_offset: i32, y_offset: i32) -> Self {
-        self.drag_image = Some((image.to_view(), x_offset, y_offset));
+    pub fn drag_element(mut self, element: impl JsCast, x_offset: i32, y_offset: i32) -> Self {
+        self.drag_image = Some((element.unchecked_into::<Element>(), x_offset, y_offset));
         self
+    }
+
+    pub fn drag_image(self, src: impl AsRef<str>, x_offset: i32, y_offset: i32) -> Self {
+        let image = web_sys::HtmlImageElement::new().unwrap();
+        image.set_src(src.as_ref());
+        self.drag_element(image, x_offset, y_offset)
     }
 
     pub fn build(self) -> &'cx NodeRef<G> {
@@ -103,14 +110,7 @@ pub fn create_draggable_effect<'cx, G: Html, T: AsTransfer + 'static>(
                         set_data(&transfer);
                     }
                     if let Some((image, offset_x, offset_y)) = options.drag_image.as_ref() {
-                        if let Some(node) = image.clone().flatten().get(0) {
-                            let node_ref = create_node_ref(cx);
-                            node_ref.set(node.clone());
-                            if let Some(node) = node_ref.try_get::<DomNode>() {
-                                let image = node.unchecked_into::<Element>();
-                                transfer.set_drag_image(&image, *offset_x, *offset_y);
-                            }
-                        }
+                        transfer.set_drag_image(image, *offset_x, *offset_y);
                     }
 
                     node.add_class(&options.dragging_class);

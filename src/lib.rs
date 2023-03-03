@@ -6,7 +6,7 @@ mod drop;
 
 pub use drag::*;
 pub use drop::*;
-pub use web_sys::{DataTransfer, DataTransferItem, DataTransferItemList, File, FileList};
+pub use web_sys::DataTransfer;
 
 #[derive(Clone, Copy)]
 pub enum DropEffect {

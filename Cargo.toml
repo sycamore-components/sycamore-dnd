@@ -20,7 +20,7 @@ rev = "ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 features = ["serde", "suspense"]
 
 [dependencies.web-sys]
-features = ["DragEvent", "DataTransfer", "DataTransferItemList", "DataTransferItem", "FileList", "File"]
+features = ["DragEvent", "DataTransfer", "HtmlImageElement"]
 version = "0.3"
 
 [workspace]
