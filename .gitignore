@@ -1,3 +1,6 @@
 /.idea/
 /dist/
 /target/
+**/dist
+**/target
+Cargo.lock

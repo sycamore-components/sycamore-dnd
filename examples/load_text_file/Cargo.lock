@@ -209,21 +209,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "201de327520df007757c1f0adce6e827fe8562fbc28bfd9c15571c66ca1f5f79"
 
 [[package]]
-name = "load_text_file"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "log",
- "serde",
- "sycamore",
- "sycamore-dnd",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "wasm-logger",
- "web-sys",
-]
-
-[[package]]
 name = "log"
 version = "0.4.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -354,18 +339,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "simple"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "log",
- "sycamore",
- "sycamore-dnd",
- "wasm-bindgen",
- "wasm-logger",
-]
-
-[[package]]
 name = "slab"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -396,16 +369,29 @@ dependencies = [
  "console_error_panic_hook",
  "log",
  "serde",
+ "sycadrop",
  "sycamore",
- "sycamore-dnd",
- "wasm-bindgen",
  "wasm-logger",
+]
+
+[[package]]
+name = "sycadrop"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "console_log",
+ "log",
+ "serde",
+ "serde_json",
+ "sycamore",
+ "wasm-logger",
+ "web-sys",
 ]
 
 [[package]]
 name = "sycamore"
 version = "0.8.2"
-source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
+source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "futures",
  "hashbrown 0.13.2",
@@ -425,7 +411,7 @@ dependencies = [
 [[package]]
 name = "sycamore-core"
 version = "0.8.2"
-source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
+source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "hashbrown 0.13.2",
  "sycamore-futures",
@@ -433,24 +419,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "sycamore-dnd"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "console_log",
- "log",
- "serde",
- "serde_json",
- "sycamore",
- "wasm-bindgen",
- "wasm-logger",
- "web-sys",
-]
-
-[[package]]
 name = "sycamore-futures"
 version = "0.8.0"
-source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
+source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "futures",
  "sycamore-reactive",
@@ -461,7 +432,7 @@ dependencies = [
 [[package]]
 name = "sycamore-macro"
 version = "0.8.2"
-source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
+source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "once_cell",
  "proc-macro2",
@@ -473,7 +444,7 @@ dependencies = [
 [[package]]
 name = "sycamore-reactive"
 version = "0.8.1"
-source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
+source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "bumpalo",
  "getrandom",
@@ -487,7 +458,7 @@ dependencies = [
 [[package]]
 name = "sycamore-web"
 version = "0.8.2"
-source = "git+https://github.com/sycamore-rs/sycamore.git#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
+source = "git+https://github.com/sycamore-rs/sycamore.git?rev=ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5#ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 dependencies = [
  "hashbrown 0.13.2",
  "html-escape",
