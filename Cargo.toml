@@ -16,7 +16,6 @@ wasm-bindgen = "=0.2.84"
 
 [dependencies.sycamore]
 git = "https://github.com/sycamore-rs/sycamore.git"
-rev = "ce74cb52f2f46ef285c10101b85a49e6bfbaa3f5"
 features = ["serde", "suspense"]
 
 [dependencies.web-sys]
