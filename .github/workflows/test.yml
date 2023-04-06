@@ -23,19 +23,18 @@ jobs:
           - ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
-          override: true
 
       - name: Cargo generate-lockfile
         run: cargo generate-lockfile
 
       - name: Cargo cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -58,19 +57,18 @@ jobs:
       RUSTFLAGS: -Dwarnings
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-          override: true
 
       - name: Cargo generate-lockfile
         run: cargo generate-lockfile
 
       - name: Cargo cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -88,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install Miri
         run: |
@@ -102,7 +100,7 @@ jobs:
         run: cargo generate-lockfile
 
       - name: Cargo cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
