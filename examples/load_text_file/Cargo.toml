@@ -21,5 +21,5 @@ web-sys = { version = "0.3", features = [
 ] }
 
 [dependencies.sycamore]
-git = "https://github.com/sycamore-rs/sycamore.git"
+version = "0.9.0-beta.1"
 features = ["serde", "suspense"]

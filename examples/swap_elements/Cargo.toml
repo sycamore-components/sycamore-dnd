@@ -14,5 +14,5 @@ console_error_panic_hook = "0.1"
 wasm-bindgen = "=0.2.84"
 
 [dependencies.sycamore]
-git = "https://github.com/sycamore-rs/sycamore.git"
+version = "0.9.0-beta.1"
 features = ["serde", "suspense"]
