@@ -69,7 +69,7 @@ pub use drop::*;
 pub use web_sys::DataTransfer;
 
 /// The effect allowed when dropping an item.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 pub enum DropEffect {
     /// No effect
     None,
@@ -86,14 +86,8 @@ pub enum DropEffect {
     /// Move the item
     Move,
     /// Any effect
+    #[default]
     All,
-}
-
-impl Default for DropEffect {
-    fn default() -> Self {
-        // This is called `uninitialized` in JS, but behaves the same as `all`
-        DropEffect::All
-    }
 }
 
 impl DropEffect {
