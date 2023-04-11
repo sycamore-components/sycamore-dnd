@@ -2,7 +2,14 @@
 name = "sycamore-dnd"
 version = "0.1.0"
 edition = "2021"
-
+authors = ["Johan Smits <johan.smits@leftclick.eu>", "Genna Wingert <wingertge@gmail.com>"]
+description = "A drag and drop library for sycamore"
+readme = "README.md"
+homepage = "https://github.com/sycamore-components/sycamore-dnd"
+repository = "https://github.com/sycamore-components/sycamore-dnd"
+license = "MIT"
+keywords = ["sycamore", "dnd", "web", "wasm"]
+categories = ["gui", "web-programming", "reactive", "wasm"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
