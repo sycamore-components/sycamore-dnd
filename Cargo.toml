@@ -8,8 +8,8 @@ readme = "README.md"
 homepage = "https://github.com/sycamore-components/sycamore-dnd"
 repository = "https://github.com/sycamore-components/sycamore-dnd"
 license = "MIT"
-keywords = ["sycamore", "dnd", "web", "wasm"]
-categories = ["gui", "web-programming", "reactive", "wasm"]
+keywords = ["sycamore", "dnd", "web", "wasm", "reactive"]
+categories = ["gui", "web-programming", "wasm"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
