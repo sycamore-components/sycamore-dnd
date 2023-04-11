@@ -1,6 +1,6 @@
 [package]
 name = "sycamore-dnd"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Johan Smits <johan.smits@leftclick.eu>", "Genna Wingert <wingertge@gmail.com>"]
 description = "A drag and drop library for sycamore"
